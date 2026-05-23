@@ -1,0 +1,456 @@
+#1
+_program
+  #1
+  _class
+    Animal
+    Object
+    "good.cl"
+    (
+    #1
+    _attr
+      nome
+      String
+      #1
+      _no_expr
+      : _no_type
+    #1
+    _attr
+      idade
+      Int
+      #1
+      _int
+        0
+      : _no_type
+    #1
+    _method
+      init
+      #1
+      _formal
+        n
+        String
+      #1
+      _formal
+        a
+        Int
+      Animal
+      #1
+      _block
+        #1
+        _assign
+          nome
+          #1
+          _object
+            n
+          : _no_type
+        : _no_type
+        #1
+        _assign
+          idade
+          #1
+          _object
+            a
+          : _no_type
+        : _no_type
+        #1
+        _object
+          self
+        : _no_type
+      : _no_type
+    #1
+    _method
+      fala
+      String
+      #1
+      _string
+        "..."
+      : _no_type
+    )
+  #1
+  _class
+    Cachorro
+    Animal
+    "good.cl"
+    (
+    #1
+    _attr
+      bom_menino
+      Bool
+      #1
+      _bool
+        1
+      : _no_type
+    #1
+    _method
+      fala
+      String
+      #1
+      _string
+        "Au Au!"
+      : _no_type
+    #1
+    _method
+      calcular_petiscos
+      #1
+      _formal
+        base
+        Int
+      #1
+      _formal
+        bonus
+        Int
+      Int
+      #1
+      _let
+        total
+        Int
+        #1
+        _plus
+          #1
+          _object
+            base
+          : _no_type
+          #1
+          _object
+            bonus
+          : _no_type
+        : _no_type
+        #1
+        _let
+          multiplicador
+          Int
+          #1
+          _int
+            2
+          : _no_type
+          #1
+          _let
+            dummy_var
+            String
+            #1
+            _no_expr
+            : _no_type
+            #1
+            _mul
+              #1
+              _object
+                total
+              : _no_type
+              #1
+              _object
+                multiplicador
+              : _no_type
+            : _no_type
+          : _no_type
+        : _no_type
+      : _no_type
+    )
+  #1
+  _class
+    Main
+    IO
+    "good.cl"
+    (
+    #1
+    _attr
+      pet
+      Cachorro
+      #1
+      _no_expr
+      : _no_type
+    #1
+    _method
+      main
+      Object
+      #1
+      _block
+        #1
+        _assign
+          pet
+          #1
+          _new
+            Cachorro
+          : _no_type
+        : _no_type
+        #1
+        _cond
+          #1
+          _isvoid
+            #1
+            _object
+              pet
+            : _no_type
+          : _no_type
+          #1
+          _dispatch
+            #1
+            _object
+              self
+            : _no_type
+            out_string
+            (
+            #1
+            _string
+              "Nenhum pet encontrado!\n"
+            : _no_type
+            )
+          : _no_type
+          #1
+          _block
+            #1
+            _dispatch
+              #1
+              _object
+                pet
+              : _no_type
+              init
+              (
+              #1
+              _string
+                "Rex"
+              : _no_type
+              #1
+              _int
+                3
+              : _no_type
+              )
+            : _no_type
+            #1
+            _dispatch
+              #1
+              _object
+                self
+              : _no_type
+              out_string
+              (
+              #1
+              _dispatch
+                #1
+                _object
+                  pet
+                : _no_type
+                fala
+                (
+                )
+              : _no_type
+              )
+            : _no_type
+            #1
+            _dispatch
+              #1
+              _object
+                self
+              : _no_type
+              out_string
+              (
+              #1
+              _static_dispatch
+                #1
+                _object
+                  pet
+                : _no_type
+                Animal
+                fala
+                (
+                )
+              : _no_type
+              )
+            : _no_type
+          : _no_type
+        : _no_type
+        #1
+        _let
+          contador
+          Int
+          #1
+          _int
+            0
+          : _no_type
+          #1
+          _loop
+            #1
+            _lt
+              #1
+              _object
+                contador
+              : _no_type
+              #1
+              _int
+                5
+              : _no_type
+            : _no_type
+            #1
+            _block
+              #1
+              _assign
+                contador
+                #1
+                _plus
+                  #1
+                  _object
+                    contador
+                  : _no_type
+                  #1
+                  _int
+                    1
+                  : _no_type
+                : _no_type
+              : _no_type
+              #1
+              _cond
+                #1
+                _leq
+                  #1
+                  _neg
+                    #1
+                    _object
+                      contador
+                    : _no_type
+                  : _no_type
+                  #1
+                  _neg
+                    #1
+                    _int
+                      3
+                    : _no_type
+                  : _no_type
+                : _no_type
+                #1
+                _dispatch
+                  #1
+                  _object
+                    self
+                  : _no_type
+                  out_string
+                  (
+                  #1
+                  _string
+                    "Contador esta alto\n"
+                  : _no_type
+                  )
+                : _no_type
+                #1
+                _dispatch
+                  #1
+                  _object
+                    self
+                  : _no_type
+                  out_string
+                  (
+                  #1
+                  _string
+                    "Contador esta baixo\n"
+                  : _no_type
+                  )
+                : _no_type
+              : _no_type
+            : _no_type
+          : _no_type
+        : _no_type
+        #1
+        _typcase
+          #1
+          _object
+            pet
+          : _no_type
+          #1
+          _branch
+            d
+            Cachorro
+            #1
+            _dispatch
+              #1
+              _object
+                self
+              : _no_type
+              out_string
+              (
+              #1
+              _string
+                "\303\211 um cachorro!\n"
+              : _no_type
+              )
+            : _no_type
+          #1
+          _branch
+            a
+            Animal
+            #1
+            _dispatch
+              #1
+              _object
+                self
+              : _no_type
+              out_string
+              (
+              #1
+              _string
+                "\303\211 um animal!\n"
+              : _no_type
+              )
+            : _no_type
+          #1
+          _branch
+            o
+            Object
+            #1
+            _dispatch
+              #1
+              _object
+                self
+              : _no_type
+              out_string
+              (
+              #1
+              _string
+                "\303\211 um objeto!\n"
+              : _no_type
+              )
+            : _no_type
+        : _no_type
+        #1
+        _cond
+          #1
+          _comp
+            #1
+            _eq
+              #1
+              _int
+                1
+              : _no_type
+              #1
+              _int
+                2
+              : _no_type
+            : _no_type
+          : _no_type
+          #1
+          _dispatch
+            #1
+            _object
+              self
+            : _no_type
+            out_string
+            (
+            #1
+            _string
+              "Certo!\n"
+            : _no_type
+            )
+          : _no_type
+          #1
+          _dispatch
+            #1
+            _object
+              self
+            : _no_type
+            out_string
+            (
+            #1
+            _string
+              "Se cair aqui eu sou burro!\n"
+            : _no_type
+            )
+          : _no_type
+        : _no_type
+      : _no_type
+    )

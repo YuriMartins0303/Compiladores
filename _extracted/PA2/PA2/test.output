@@ -1,0 +1,197 @@
+#name "test.cl"
+#10 CLASS
+#10 TYPEID Main
+#10 INHERITS
+#10 TYPEID IO
+#10 '{'
+#11 OBJECTID x
+#11 ':'
+#11 TYPEID Int
+#11 ASSIGN
+#11 INT_CONST 123
+#11 ';'
+#12 OBJECTID y
+#12 ':'
+#12 TYPEID Int
+#12 ASSIGN
+#12 INT_CONST 0
+#12 ';'
+#15 OBJECTID testWhile
+#15 '('
+#15 ')'
+#15 ':'
+#15 TYPEID Object
+#15 '{'
+#16 '{'
+#17 WHILE
+#17 OBJECTID y
+#17 '<'
+#17 INT_CONST 10
+#17 LOOP
+#18 OBJECTID y
+#18 ASSIGN
+#18 OBJECTID y
+#18 '+'
+#18 INT_CONST 1
+#19 POOL
+#19 ';'
+#20 INT_CONST 0
+#20 ';'
+#21 '}'
+#22 '}'
+#22 ';'
+#25 OBJECTID testIf
+#25 '('
+#25 ')'
+#25 ':'
+#25 TYPEID Object
+#25 '{'
+#26 '{'
+#27 IF
+#27 BOOL_CONST true
+#27 THEN
+#28 OBJECTID x
+#28 ASSIGN
+#28 OBJECTID x
+#28 '+'
+#28 INT_CONST 1
+#29 ELSE
+#30 OBJECTID x
+#30 ASSIGN
+#30 OBJECTID x
+#30 '-'
+#30 INT_CONST 1
+#31 FI
+#31 ';'
+#32 INT_CONST 0
+#32 ';'
+#33 '}'
+#34 '}'
+#34 ';'
+#37 OBJECTID testCase
+#37 '('
+#37 OBJECTID a
+#37 ':'
+#37 TYPEID Object
+#37 ')'
+#37 ':'
+#37 TYPEID Object
+#37 '{'
+#38 CASE
+#38 OBJECTID a
+#38 OF
+#39 OBJECTID b
+#39 ':'
+#39 TYPEID Int
+#39 DARROW
+#39 OBJECTID b
+#39 '+'
+#39 INT_CONST 1
+#39 ';'
+#40 OBJECTID c
+#40 ':'
+#40 TYPEID Object
+#40 DARROW
+#40 INT_CONST 0
+#40 ';'
+#41 ESAC
+#42 '}'
+#42 ';'
+#45 OBJECTID testLet
+#45 '('
+#45 ')'
+#45 ':'
+#45 TYPEID Object
+#45 '{'
+#46 '{'
+#47 LET
+#47 OBJECTID z
+#47 ':'
+#47 TYPEID Int
+#47 ASSIGN
+#47 INT_CONST 5
+#47 IN
+#48 OBJECTID z
+#48 '+'
+#48 INT_CONST 1
+#48 ';'
+#49 '}'
+#50 '}'
+#50 ';'
+#53 OBJECTID testNew
+#53 '('
+#53 ')'
+#53 ':'
+#53 TYPEID Object
+#53 '{'
+#54 '{'
+#55 IF
+#55 ISVOID
+#55 '('
+#55 NEW
+#55 TYPEID Main
+#55 ')'
+#55 THEN
+#55 INT_CONST 0
+#55 ELSE
+#55 INT_CONST 1
+#55 FI
+#55 ';'
+#56 IF
+#56 NOT
+#56 BOOL_CONST false
+#56 THEN
+#56 INT_CONST 1
+#56 ELSE
+#56 INT_CONST 0
+#56 FI
+#56 ';'
+#57 INT_CONST 0
+#57 ';'
+#58 '}'
+#59 '}'
+#59 ';'
+#60 '}'
+#60 ';'
+#66 BOOL_CONST true
+#67 BOOL_CONST false
+#68 TYPEID True
+#69 TYPEID False
+#74 OBJECTID a
+#75 OBJECTID a_1
+#76 TYPEID A
+#77 TYPEID A_1
+#78 INT_CONST 0123
+#79 INT_CONST 999999
+#84 DARROW
+#84 LE
+#84 ASSIGN
+#85 '+'
+#85 '-'
+#85 '*'
+#85 '/'
+#85 '='
+#85 '<'
+#85 '.'
+#85 '~'
+#85 ','
+#85 '@'
+#85 ';'
+#85 ':'
+#85 '('
+#85 ')'
+#85 '{'
+#85 '}'
+#99 ERROR "Unmatched *)"
+#104 STR_CONST "abc"
+#105 STR_CONST "linha1\nlinha2"
+#106 STR_CONST "tab\tfim"
+#107 STR_CONST "backspace\bX"
+#108 STR_CONST "formfeed\fX"
+#109 STR_CONST "aspas: \""
+#110 STR_CONST "barra: \\"
+#111 STR_CONST "q vira q"
+#119 ERROR "Unterminated string constant"
+#119 OBJECTID x
+#123 ERROR "Unterminated string constant"
+#128 ERROR "EOF in comment"

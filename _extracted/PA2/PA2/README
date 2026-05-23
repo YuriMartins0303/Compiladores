@@ -1,0 +1,165 @@
+Arquivo README para a Tarefa de Programação 2 (edição C++)
+=====================================================
+
+Seu diretório agora deve conter os seguintes arquivos:
+
+ Makefile        -> [course dir]/src/PA2/Makefile
+ README
+ cool.flex
+ test.cl
+ lextest.cc      -> [course dir]/src/PA2/lextest.cc
+ mycoolc         -> [course dir]/src/PA2/mycoolc
+ stringtab.cc    -> [course dir]/src/PA2/stringtab.cc
+ utilities.cc    -> [course dir]/src/PA2/utilities.cc
+ handle_flags.cc -> [course dir]/src/PA2/handle_flags.cc
+ *.d             Arquivos de dependência
+ *.*             Outros arquivos gerados
+
+Os arquivos de blibioteca (.h) para esta tarefa podem ser encontrados em 
+[diretório do tp]/include/PA2
+
+	O Makefile contém os arquivos bases para compilar e 
+	executar seu programa. NÃO MODIFIQUE.
+
+	O arquivo README contém essas informações. Parte da tarefa é preencher
+	o README com a descrição do seu projeto. Você deve
+	explicar as decisões de design, explicar por que seu código está correto e
+	por que seus casos de teste são adequados. Faz parte da tarefa
+	explicar as coisas de forma clara e concisa em texto, bem como
+	comentar seu código. Basta editar este arquivo.
+
+	cool.flex é um arquivo esqueleto para a especificação do
+	analisador léxico. Você deve completá-lo com suas expressões, 
+	padrões e ações regulares. Informações sobre como fazer isso 
+	estão no manual do flex, que faz parte do seu trabalho.
+
+	test.cl é um programa COOL que você pode usar para testar o analisador
+	léxico.	Ele contém alguns erros, então não será compilado com o coolc.
+	No entanto, test.cl não exercita todas as construções léxicas do COOL 
+	e parte da sua tarefa é reescrever test.cl com um conjunto completo de 
+	testes para o seu analisador léxico.
+
+	cool-parse.h contém definições que são usadas por quase todas as partes
+	do compilador. NÃO MODIFIQUE.
+
+	stringtab.{cc|h} e stringtab_functions.h contêm funções
+	para manipular as tabelas de strings. NÃO MODIFIQUE.
+
+	utilities.{cc|h} contém funções usadas pela parte main() do
+	programa lextest. Você pode querer usar a função strdup()
+	definida aqui. Lembre-se de que você não deve imprimir nada
+	de dentro de cool.flex! NÃO MODIFIQUE.
+
+	O arquivo lextest.cc contém a função principal que chamará seu
+	analisador léxico e imprimirá os tokens retornados. NÃO MODIFIQUE.
+
+	mycoolc é um script shell que une as fases do compilador usando 
+	pipes Unix em vez de vincular o código estaticamente. Embora 
+	ineficiente, essa arquitetura facilita a combinação dos componentes 
+	que você escreve com os do compilador do curso. NÃO MODIFIQUE.
+
+	cool-lexer.cc é o analisador léxico gerado pelo flex a partir de 
+	cool.flex. NÃO O MODIFIQUE, pois suas alterações serão sobrescritas
+	na próxima vez que você executar o flex.
+
+	Os arquivos *.d são Makefiles gerados automaticamente que capturam
+	as dependências entre os arquivos de origem e de cabeçalho neste diretório.
+	Esses arquivos são atualizados automaticamente pelo Makefile; consulte a 
+	documentação do gmake para obter uma explicação detalhada.
+
+Instruções
+------------
+
+	Para compilar seu programa lextest, digite:
+
+	% gmake lexer
+
+	Execute seu analisador léxico colocando sua entrada de teste em 
+	em arquivo 'foo.cl' e execute o programa lextest:
+
+	% ./lexer foo.cl
+
+	Para executar seu analisador léxico no arquivo test.cl, digite:
+
+	% gmake dotest
+
+	Se você acha que seu analisador léxico está correto e se comporta como o 
+	que escrevemos, você pode experimentar 'mycoolc' e ver se ele executa e 
+	produz o código correto para os exemplos.
+	Se o seu analisador léxico se comportar de maneira inesperada, você poderá 
+	obter erros em qualquer lugar, ou seja, durante a análise sintática, durante a 
+	análise semântica, durante a geração de código ou somente ao executar o código 
+	produzido no Spim. Portanto, tenha cuidado.
+
+	Para entregar seu trabalho, digite:
+
+	% gmake submit-clean
+
+	Execute o programa "submit" seguindo as instruções na página do curso.
+	
+	Executar "submit" coletará os arquivos cool.flex, test.cl,
+	README e test.output. Não se esqueça de editar o arquivo README para
+	incluir seu texto e escrever seus próprios casos de teste em
+	test.cl.
+
+	Você pode entregar a tarefa quantas vezes quiser.No entanto, apenas 
+	a última versão será considerada para avaliação.
+
+	Se você alterar a arquitetura, deverá emitir um novo comando.
+
+	% gmake clean
+
+	Quando você alterna entre um tipo de máquina e outra. Se em algum 
+	momento você receber erros estranhos do linker,	você provavelmente 
+	se esqueceu desta etapa.
+
+	Boa sorte!
+
+---8<------8<------8<------8<---cut here---8<------8<------8<------8<---
+
+Redação do relatório para PA2
+----------------
+
+Implementação:
+O analisador léxico do COOL em C++/Flex no arquivo cool.flex, foi implementado seguindo a especificação lexical do COOL e 
+integrando com a infraestrutura do PA2.
+
+O scanner reconhece:
+
+	Espaços e quebras de linha, ignorando whitespace e incrementando curr_lineno ao ler \n (inclusive dentro de 
+	comentários e strings quando aplicável).
+
+	Comentários de linha iniciados por --, consumindo até o fim da linha.
+
+	Comentários de bloco aninhados no formato (* ... *), com um contador de profundidade para suportar nesting. Casos de erro:
+		*) fora de comentário retorna ERROR com mensagem "Unmatched *)".
+		EOF dentro de comentário retorna ERROR com mensagem "EOF in comment".
+
+	Operadores multi-caractere: => (DARROW), <= (LE) e <- (ASSIGN).
+
+	Palavras-chave do COOL de forma case-insensitive (usando padrões [aA][bB]...), além de true/false 
+	como BOOL_CONST (exigindo inicial minúscula).
+
+	Identificadores: TYPEID (começa com letra maiúscula) e OBJECTID (começa com letra minúscula), armazenados em idtable.
+
+	Inteiros (INT_CONST), armazenados em inttable.
+
+	Strings (STR_CONST) com estado dedicado (STRING) e buffer interno:
+		Suporta escapes \n, \t, \b, \f, \\, \" e a regra genérica \c -> c.
+		Erros de string tratados conforme especificação: "Unterminated string constant" (newline antes de fechar), 
+		"EOF in string constant", "String contains null character" e "String constant too long".
+
+	Qualquer caractere inválido é convertido em token ERROR com mensagem contendo o próprio caractere (1 char), via regra “catch-all”.
+
+Testes:
+Os casos de teste no arquivo test.cl cobrem:
+
+	Reconhecimento de palavras-chave e suas variações de caixa alta/baixa.
+
+	Diferença entre TYPEID e OBJECTID.
+
+	Inteiros, operadores e símbolos.
+
+	Comentários de linha e comentários de bloco aninhados.
+
+	Strings com escapes e casos de erro (unterminated string, EOF em comentário, unmatched *)).

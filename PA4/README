@@ -1,0 +1,230 @@
+README para o Trabalho Prático 4 — Análise Semântica (PA4, C++)
+=================================================================
+
+Integrantes: (preencher com os nomes do grupo)
+
+================================================================
+Relatório da Implementação
+================================================================
+
+--------------------------------------------------------------
+1. Arquivos modificados/criados
+--------------------------------------------------------------
+
+cool-tree.handcode.h
+  Alteração mínima em relação ao PA3: adicionamos a declaração
+      void semant();
+  ao macro program_EXTRAS, o que faz o gerador automático incluir
+  esse método em program_class (o ponto de entrada do analisador).
+
+semant.h
+  Cabeçalho principal.  Define:
+  - ObjEnv (typedef de SymbolTable<Symbol,Entry>) — tabela de
+    símbolos escopada para mapeamento id → tipo.
+  - MethodInfo — estrutura com tipos dos parâmetros e tipo de
+    retorno de um método.
+  - ClassTable — classe central do analisador, com:
+      * class_map   : nome de classe → nó AST (Class_)
+      * parent_map  : nome → nome do pai
+      * own_methods : métodos PRÓPRIOS de cada classe
+      * own_attrs   : atributos PRÓPRIOS de cada classe
+    e métodos is_subtype, join, get_method, get_attr_type,
+    check_classes, etc.
+
+semant.cc
+  Implementação completa (~700 linhas).  Detalhes em seguida.
+
+good.cl / bad.cl
+  Casos de teste positivos e negativos (ver seção 5).
+
+--------------------------------------------------------------
+2. Estrutura do analisador (program_class::semant)
+--------------------------------------------------------------
+
+A análise é dividida em três fases:
+
+  Fase 1 — Validação da hierarquia de classes (ClassTable::ClassTable)
+    a. Instalar classes básicas (Object, IO, Int, Bool, String) com
+       seus métodos e atributos primitivos.
+    b. Registrar todas as classes do programa na class_map /
+       parent_map, reportando:
+         - Redefinição de classe básica ou de SELF_TYPE
+         - Classe já definida (duplicata)
+         - Herança de Int/Bool/String ou de SELF_TYPE
+         - Classe pai indefinida
+       Em todos os casos, o pai é fixado como Object para
+       continuar a análise (recuperação de erros).
+    c. Verificar acicidade (check_acyclic): DFS em parent_map.
+       Ao detectar um ciclo, fixa o pai da classe no ciclo
+       como Object (evita recursão infinita nas fases seguintes).
+    d. Verificar existência de Main e do método main() sem
+       parâmetros.
+
+  Fase 2 — Construção das tabelas (build_tables)
+    Chamado somente se a Fase 1 não reportou erros, garantindo
+    uma hierarquia acíclica e bem formada.
+
+    build_method_table_for(C):
+      Recursão DFS pela cadeia de herança (pai antes de filho).
+      Primeiramente copia os métodos do pai para a entrada de C,
+      depois sobrescreve/adiciona com os métodos próprios de C.
+      Resultado: own_methods[C] contém TODOS os métodos visíveis
+      em C (herdados + próprios).  Isso torna get_method O(1).
+
+    build_attr_table_for(C):
+      Registra apenas os atributos PRÓPRIOS de C.
+      A busca via get_attr_type sobe a cadeia em tempo O(d),
+      onde d é a profundidade.
+
+  Fase 3 — Verificação de tipos (check_classes)
+    Para cada classe do usuário (na ordem de iteração do map):
+      a. Detectar atributos duplicados na própria classe e
+         atributos que tentam redefinir atributos herdados.
+      b. Detectar métodos duplicados na própria classe.
+      c. Construir ObjEnv:
+           - Entrar em um escopo
+           - Adicionar self : SELF_TYPE
+           - Percorrer ancestrais do mais antigo ao mais novo,
+             adicionando atributos próprios de cada um (atributos
+             mais novos sombreiam os mais antigos no env).
+      d. Para cada feature da classe:
+           - attr  → tc_attr
+           - method → tc_method
+
+    tc_attr:
+      Valida nome ≠ self, tipo declarado existente,
+      e se houver inicialização, checa tipo_init ≤ tipo_decl.
+
+    tc_method:
+      Valida tipo de retorno, verificação de override
+      (número de parâmetros + tipos + tipo de retorno devem
+      ser idênticos à assinatura do pai), parâmetros sem
+      nome "self" e sem tipo SELF_TYPE, sem duplicatas.
+      Abre escopo extra para os formais antes de type-check
+      do corpo; verifica tipo_corpo ≤ tipo_retorno.
+
+    tc_expr (dispatcher com dynamic_cast):
+      Despacha para a função especializada de cada nó de
+      expressão.  Cada função anota expr->type e retorna o tipo.
+
+--------------------------------------------------------------
+3. SELF_TYPE
+--------------------------------------------------------------
+
+O tipo especial SELF_TYPE é tratado em dois pontos centrais:
+
+is_subtype(T1, T2, C):
+  • SELF_TYPE ≤ SELF_TYPE sempre
+  • SELF_TYPE ≤ T   ⟺  C ≤ T          (T ≠ SELF_TYPE)
+  • T ≤ SELF_TYPE   é falso se T ≠ SELF_TYPE
+  • No_type ≤ qualquer tipo             (tipo-bottom)
+
+join(T1, T2, C):
+  • SELF_TYPE ⊔ SELF_TYPE = SELF_TYPE
+  • Demais casos: substituir SELF_TYPE por C e calcular o
+    LUB na hierarquia de classes (ancestral comum mais próximo).
+
+Nos dispatches (tc_dispatch / tc_static_dispatch):
+  • O tipo de retorno do método é SELF_TYPE → resultado é o
+    tipo do receptor (preservando SELF_TYPE se o receptor
+    também era SELF_TYPE).
+
+--------------------------------------------------------------
+4. Recuperação de erros
+--------------------------------------------------------------
+
+O analisador nunca aborta ao encontrar um único erro semântico
+(exceto hierarquia mal formada na Fase 1, onde a Fase 2 e 3
+só rodam com hierarquia limpa).
+
+Estratégias de recuperação usadas:
+  - Tipo inválido ou não declarado → Object
+  - Inicialização incorreta  → ignorada para o corpo
+  - Dispatch a método indefinido → Object e type-check dos args
+  - Número errado de argumentos → Object, args verificados
+  - Parâmetro formal inválido → ignorado para o escopo
+  - Ciclo de herança → pai fixado como Object
+
+--------------------------------------------------------------
+5. Casos de teste
+--------------------------------------------------------------
+
+good.cl
+  - Herança simples e em cadeia (Animal→Cachorro, Veiculo→Carro→CarroEsportivo)
+  - Override correto de métodos (falar() em Cachorro/Gato)
+  - Retorno SELF_TYPE em métodos e new SELF_TYPE
+  - Let aninhado com while (fatorial)
+  - case com múltiplos ramos cobrindo a hierarquia
+  - isvoid
+  - Dispatch estático via @
+  - Comparações legais (=) com Int, String, Bool
+  - Bloco com resultado sendo a última expressão
+
+bad.cl
+  Cada classe ilustra um erro diferente (total de ~28 erros):
+  1  Herança de Int
+  2  Herança de classe indefinida
+  4  Redefinição de classe
+  5  Atributo chamado 'self'
+  6  Tipo de atributo indefinido
+  7  Atributo duplicado na mesma classe
+  8  Atributo redefinido em subclasse
+  9  Tipo de retorno de método indefinido
+  10 Parâmetro formal chamado 'self'
+  11 Override: tipo de parâmetro diferente
+  12 Override: tipo de retorno diferente
+  13 Corpo de método não conforma ao tipo de retorno
+  14 Inicialização de atributo não conforma ao tipo
+  15 Atribuição a 'self'
+  16 Variável não declarada
+  17 Aritmética com não-Int
+  18 Comparação de tipos básicos distintos com =
+  19 Predicado de if não é Bool
+  20 Predicado de while não é Bool
+  21 Dispatch a método inexistente
+  22 Número errado de argumentos
+  23 Argumento não conforma ao tipo do parâmetro
+  24 'self' ligado em let
+  25 Inicialização de let não conforma ao tipo
+  26 Tipo duplicado em ramos de case
+  27 Dispatch estático para tipo inexistente
+  28 new com tipo indefinido
+
+--------------------------------------------------------------
+6. Justificativa de corretude e robustez
+--------------------------------------------------------------
+
+Hierarquia: A verificação de acicidade é uma DFS com conjunto
+de visitados; todos os casos de herança inválida são tratados
+antes de qualquer análise de tipo.
+
+Tabelas: build_method_table_for usa recursão DFS pais-antes-
+filhos, garantindo que a tabela de um pai seja completa antes
+do filho herdar dela.  O marcador own_methods[C] = {} impede
+recursão infinita mesmo em ciclos residuais.
+
+Tipos: is_subtype e join estão de acordo com a especificação
+do Manual de Referência de COOL, seções 3 e 4.  Em especial,
+SELF_TYPE é substituído corretamente em dispatch e join.
+
+Mensagens de erro: todas incluem nome do arquivo e número de
+linha (via semant_error(filename, tree_node*)), garantindo que
+o aluno encontre facilmente a origem do erro.
+
+--------------------------------------------------------------
+7. Instrução de entrega
+--------------------------------------------------------------
+
+Dentro do diretório PA4 (após rodar
+  make -f /var/tmp/cool/assignments/PA4/Makefile
+e copiar os arquivos deste pacote), compile e teste com:
+
+  make semant                     # compila o analisador
+  mysemant good.cl                # deve produzir AST anotada
+  mysemant bad.cl                 # deve listar todos os erros
+  mycoolc good.cl                 # compilação completa
+
+Para entregar:
+  tar cvzf PA4.tar.gz PA4
+  uuencode PA4.tar.gz PA4.tar.gz > PA4.u
+  # submeter PA4.u via Canvas
