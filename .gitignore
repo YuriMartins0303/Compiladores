@@ -1,13 +1,2 @@
-# PDFs (binários grandes)
-*.pdf
-
-# Arquivos compactados binários
-*.tar.gz
-*.u
-
-# Arquivos auxiliares criados localmente
-_pdf_text.txt
-_validate_pa4.py
-
 # Git
 .git/

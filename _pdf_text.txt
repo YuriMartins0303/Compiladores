@@ -1,0 +1,952 @@
+======================================================================
+00-Configurações Iniciais.pdf
+======================================================================
+
+--- page 1 ---
+Compiladores Conﬁguração para TPs
+Conﬁguração e Instalação de Material
+para Realização de Trabalhos Práticos
+T odas as atividades práticas foram validadas no sistema Ubuntu L TS 16.04 . Caso queira
+usar outro sistema operacional, distribuição, ou versão, o suporte e utilização de módulos/partes da
+“versão oﬁcial” do compilador de Cool podem ﬁcar comprometidos (ou, até mesmo, não funcionar). Ou
+seja, poderá ser necessário esforço adicional.
+Obtenha junto ao material de aula disponibilizado noCanvas o arquivo x86_64.u – que contém
+todos os arquivos necessários a implementação e teste dos vários trabalhos práticos do semestre.
+1 Instalando dependências
+Existem várias dependências que devem ser instaladas necessariamente para que as tarefas de progra-
+mação funcionem corretamente. Especiﬁcamente, você precisará deg++, make, csh, sharutils, flex e
+bison. No Ubuntu 16.04 com o gerenciador de pacotes apt instalado, você pode obter/instalar todas
+essas dependências com um único comando:
+sudo apt-get install g++ make csh sharutils flex bison
+Case você deseje realizar a implementação utilizando a versão Java das tarefas, também precisará
+instalar javac – o que pode ser feito da seguinte maneira:
+sudo apt-get install default-jdk
+2 Instalando arquivos dos trabalhos práticos
+Todos os códigos das atividades práticas, bem como dos módulos/partes do compilador deverão ser ins-
+tados no diretório/var/tmp/cool – caso contrário o simuladorSPIM da linguagemassembly de MIPS não
+irá funcionar.
+Dessa forma, você deve criar o subdiretório/var/tmp/cool e copiar para ele o arquivox86_64.u
+disponível no Canvas.
+Em seguida o arquivo de ser decodiﬁcado e descompactado, use as seguintes linhas de comando
+(considerando que o diretório/var/tmp/cool é o corrente):
+uudecode x86_64.u
+tar xvpf x86_64.tar.gz
+Para ﬁnalizar a instalação local, basta você executar (ainda com o diretório/var/tmp/cool como
+corrente):
+make install
+Agora, você pode retornar para seu diretório pessoal (por exemplo, usando cd ∼) e dar início a
+realização das atividades práticas.
+1o Sem/2022 pág. 1 de 1
+
+======================================================================
+01-TP Cool Extra.pdf
+======================================================================
+
+--- page 1 ---
+Compiladores Conﬁguração para TPs
+Trabalho Prático N.01 (Extra – 04 pontos)
+Entrega: Conforme Tarefa no Canvas
+Neste trabalho, você deve escrever um pequeno programa Cool. O objetivo é para familiarizá-lo
+com a linguagem Cool e dar-lhe experiência com algumas das ferramentas usadas ao longo do semestre.
+Esta tarefa não deverá ser feita em grupo; você deve entregar seu próprio trabalho individual. Todas
+as demais etapas do Trabalho Prático que virão podem ser feitas em equipes de até quatro alunos ou
+individualmente.
+Uma máquina com apenas uma única pilha para armazenamento é umamáquina de pilha . Consi-
+dere a seguinte linguagem muito primitiva para programação uma máquina de pilha:
+Commando Signiﬁcado
+int empilha o inteiroint na pilha
++ empilha o símbolo ‘+’ na pilha
+s empilha o símbolo ‘s’ na pilha
+e avalia a conteúdo do topo da pilha (ver adiante)
+d exibe o conteúdo da pilha
+x encerra a execução
+O comando ‘d ’simplesmente imprime o conteúdo da pilha, um elemento por linha, começando com
+o topo da pilha. O comportamento do comando ‘e’ depende do conteúdo da pilha quando ‘e’ for emitido:
+• Se ‘+’ estiver no topo da pilha, então o ‘+’ é retirado da pilha, os dois inteiros seguintes são desempi-
+lhados e adicionados, e o resultado da soma é empilhado de volta na pilha.
+• Se ‘s’ está no topo da pilha, então o ‘s’ é desempilhado e os dois itens seguintes são trocados de lugar
+na pilha.
+• Se um inteiro estiver no topo da pilha ou a pilha estiver vazia, a pilha permanecerá inalterada.
+Os exemplos a seguir mostram o efeito do comando ‘e’ em várias situações; o topo da pilha está à
+esquerda:
+Pilha antes Pilha Depois
++ 1 2 5 s . . . 3 5 s . . .
+s 1 + + 99 . . . + 1 + 99
+1 + 3 . . . 1 + 3 . . .
+Você deve implementar um interpretador para essa linguagem em Cool. Entrada para o seu programa
+é uma série de comandos, um comando por linha. Seu interpretador deve solicitar comandos com>. Seu
+programa não precisa fazer nenhuma veriﬁcação de erros: você pode assumir que todos os comandos são
+válidos e que o número apropriado e o tipo de argumentos estão na pilha para avaliação. Você também
+pode assumir que os inteiros de entrada são sem sinal (isto é, são todos positivos). Finalmente, seu
+interpretador deve sair graciosamente; não chameabort() depois de receber um comandox.
+Você está livre para implementar este programa em qualquer estilo que você escolher. No entanto, em
+preparaçãoparacriarumcompiladorCool, recomenda-sequevocêtentedesenvolverumasoluçãoorientada
+a objetos. Uma abordagem é deﬁnir uma classeStackCommand com um número de operações genéricas
+e, em seguida, deﬁnir subclasses deStackCommand, uma para cada tipo de comando da linguagem. Essas
+subclasses deﬁnem operações especíﬁcas para cada comando, por exemplo: como avaliar esse comando,
+como exibir esse comando, etc. Se desejar, você pode usar as classes deﬁnidas ematoi.cl no subdiretório
+examples para executar a conversão de string para inteiro. Se você encontrar algum outro código no
+subdiretório examples que considere útil, você pode usá-lo também.
+Uma solução (padrão de resposta) foi desenvolvida com aproximadamente 200 linhas de código fonte
+em Cool. Essas informações são fornecidas a você apenas como uma medida aproximada da quantidade
+de trabalho envolvida na tarefa – sua solução pode ser substancialmente mais curta ou mais longa.
+pág. 1 de 3
+--- page 2 ---
+Compiladores Conﬁguração para TPs
+Exemplo de uso
+A seguir, um exemplo de compilação e execução da solução (padrão de resposta) desenvolvida.
+/var/tmp/cool/bin/coolc stack.cl atoi.cl
+/var/tmp/cool/bin/spim -file stack.s
+SPIM Version 5.6 of January 18, 1995
+Copyright 1990-1994 by James R. Larus (larus@cs.wisc.edu).
+All Rights Reserved.
+See the file README a full copyright notice.
+Loaded: /home/ff/cs164/lib/trap.handler
+>1
+>+
+>2
+>s
+>d
+s
+2
++
+1
+>e
+>e
+>d
+3
+>x
+COOL program successfully executed
+Uma outra possibilidade é salvar a entrada (lista de comandos) em um arquivo e usá-lo como entrada.
+Você irá encontrar um exemplo emstack.test que é utilizado como entrada padrão para teste. Para
+utilizá-lo, basta usarmake test , como pode ser vista a seguir.
+make test
+/var/tmp/cool/bin/coolc stack.cl atoi.cl
+stack.test
+/var/tmp/cool/bin/spim -file stack.s < stack.test
+SPIM Version 6.5 of January 4, 2003
+Copyright 1990-2003 by James R. Larus (larus@cs.wisc.edu).
+All Rights Reserved.
+See the file README for a full copyright notice.
+Loaded: /var/tmp/cool/lib/trap.handler
+>>>>>>>s
+2
++
+1
+>>>3
+>>>>>>>s
+s
+s
+1
++
+3
+>>>>>>>4
+>COOL program successfully executed
+pág. 2 de 3
+--- page 3 ---
+Compiladores Conﬁguração para TPs
+Obtendo e entregando os arquivos do trabalho
+Certiﬁque-se que ter realizado a instalação e conﬁguração do material para realização de trabalhos prá-
+ticos que foi disponibilizado viaCanvas. Seu sistema deve conter a hierarquia de diretórios necessários
+em /var/tmp/cool. Certiﬁque-se também de ter instalado o simuladorSPIM (provavelmente oqt-spim
+também funcionará, mas você pode ter que mudar alguns comandos).
+Crie em seu diretório local um subdiretório de trabalho denominadoPA1, em seguida, faça com que
+ele seja o diretório corrente, isto écd PA1 . A partir dele, digite a seguinte linha de comando:
+make -f /var/tmp/cool/assignments/PA1/Makefile
+Este comando cria vários arquivos no diretório que você precisará para realizar a atividade prática.
+Siga as instruções contidas no arquivoREADME.
+Depois de concluído o trabalho , você deverá realizar a entrega dessa tarefa. Para tanto, você
+deve fazer as seguintes atividades:
+1. Assegurar-se que que seu código esteja no arquivostack.cl e de de que ele compila e funciona corre-
+tamente :-).
+2. Responder as três perguntas existentes no ﬁnal do arquivoREADME.
+3. Compactar e codiﬁcar o subdiretórioPA1, por exemplo da seguinte forma:
+cd ..
+tar cvzf PA1.tar.gz PA1
+uuencode PA1.tar.gz PA1.tar.gz > PA1.u
+rm PA1.tar.gz
+4. Entregar o arquivoPA1.u via SGA.
+pág. 3 de 3
+
+======================================================================
+02-TP Análise Léxica.pdf
+======================================================================
+
+--- page 1 ---
+Compiladores Conﬁguração para TPs
+Trabalho Prático N.02 (Valor: 05 pontos)
+Entrega: Conforme Tarefa no Canvas
+1 Visão geral
+As tarefas de programação – TPs 02 a 05 – irão direcioná-lo para projetar e construir um compilador
+para Cool. Cada tarefa cobrirá um componente do compilador: análise léxica, análise sintática, análise
+semântica e geração de código irá resultar em uma fase do compilador completamente funcional que deverá
+interagir com outras fases. Você terá a opção de fazer seus projetos em C++ ou Java.
+Para esta tarefa, você deve implementar um analisador léxico, também chamado descanner, usando
+um lexical analyzer generator – a ferramenta C++ é chamadaFlex; a ferramenta Java é chamadaJLex.
+Você descreverá o conjunto detokens para Cool em um formato de entrada apropriado e o gerador de
+analisador léxico produzirá o código propriamente dito (em C++ ou Java) para reconhecimento dastokens
+em programas escritos em Cool.
+A documentação on-line para todas as ferramentas necessárias para o projeto foi disponibilizada no
+Canvas. Isto inclui manuais paraFlexeJLex(usados nesta tarefa), a documentação paraBisoneJava CUP
+(usados na próxima tarefa), bem como a manual para o simulador de assembly para MIPS denominado
+spim.
+Você pode trabalhar em grupo de até 05 pessoas para esta tarefa (grupos maiores não serão aceitos
+em nenhuma hipótese).
+2 Introdução ao Flex / JLex
+O Flex permite que você implemente um analisador léxico escrevendo regras que correspondam a expres-
+sões regulares deﬁnidas pelo usuário e executando uma ação especíﬁca para cada padrão correspondente
+encontrado na entrada O Flex traduz um arquivo de regras (por exemplo, “lexer.ﬂex”) para o código-fonte
+em C (ou, se você estiver usando JLex, em Java) implementando um autômato ﬁnito que reconhece as
+expressões regulares que você especiﬁcou em seu arquivo de regras. Felizmente, não é necessário enten-
+der (ou mesmo, examinar) o arquivo gerado automaticamente (que é, geralmente muito, confuso) que
+implementa suas regras.
+Os arquivos de regras no Flex são estruturados da seguinte maneira:
+%{
+Declarations
+%}
+Definitions
+%%
+Rules
+%%
+User subroutines
+As seçõesDeclarationseUser subroutinessão opcionais e permitem escrever declarações e funções
+auxiliares em C (ou em Java, no caso doJLex). A seçãoDefinitions também é opcional, mas geralmente
+é muito útil, pois as deﬁnições permitem atribuir nomes a expressões regulares. Por exemplo, a deﬁnição
+DIGIT [0-9]
+pág. 1 de 7
+--- page 2 ---
+Compiladores Conﬁguração para TPs
+permite que você deﬁna um dígito. Aqui,DIGIT é o nome dado à expressão regular que corresponde
+a um único caractere qualquer entre 0 e 9.
+Atabelaaabaixoforneceumavisãogeraldasexpressõesregularescomunsquepodemserespeciﬁcadas
+no Flex:
+x o caractere "x"
+“x” um "x", mesmo que x seja um operador
+\x um "x", mesmo que x seja um operador
+[xy] o caractere x ou y
+[x-z] o caractere x, y ou z
+[^x] qualquer caractere exceto x
+. qualquer caractere exceto mudança de linha
+^x um x no início de uma linha
+<y>x um x quando a ferramenta Lex está na condição inicial y
+x$ um x no ﬁnal de uma linha
+x? um x opcional
+x* 0, 1, 2, ... instâncias of x
+x+ 1, 2, 3, ... instâncias of x
+x|y um x ou um y
+(x) um x
+x/y um x mas somente de for seguido de y
+{xx} tradução de xx da seção de deﬁnições
+x{m,n} de m a n ocorrências de x
+A parte mais importante do seu analisador léxico é a seção de regras. Uma regra noFlex especiﬁca
+uma ação a ser executada se a entrada corresponder à expressão ou deﬁnição regular no início da regra.
+A ação a ser executada é especiﬁcada escrevendo-se um código-fonte em C/C++ (ou em Java).
+Por exemplo, supondo que um dígito represente umatoken em uma determinada linguagem (note
+que esse não é o caso da linguagem Cool), a regra:
+{DIGIT} {
+cool_yylval.symbol = inttable.add_string(yytext);
+return DIGIT_TOKEN;
+}
+registra o valor do dígito na variável globalcool_yylval e retorna o código dotoken apropriado. Veja
+Seção 5 para uma discussão mais detalhada da variável globalcool_yylval e veja a Seção 4.2 para uma
+discussão sobre ointtable usado no fragmento de código acima.
+Um ponto importante a ser lembrado é que, se a entrada atual (ou seja, o resultado da chamada de
+função parayylex()) corresponder a várias regras, oFlex selecionará a regra que corresponde ao maior
+número de caracteres. Por exemplo, se você deﬁnir as duas regras como as seguintes:
+[0-9]+ { // ação 1}
+[0-9a-z]+ { // ação 2}
+e caso a sequência de caracteres‘2a’ aparecer em seguida no arquivo que está sendo processado, então
+a ação 2 será executada, já que a segunda regra corresponde a mais caracteres que a primeira regra. Se
+várias regras corresponderem ao mesmo número de caracteres, a regra que aparecer primeiro no arquivo
+será escolhida.
+Ao escrever regras noFlex, pode ser necessário executar ações diferentes, dependendo dastokens
+encontradas anteriormente. Por exemplo, ao processar uma token de fechamento de comentário, você
+pode estar interessado em saber se umatoken de abertura de comentário foi encontrada anteriormente.
+pág. 2 de 7
+--- page 3 ---
+Compiladores Conﬁguração para TPs
+Uma maneira óbvia de rastrear o estado é declarar variáveis globais em sua seção de declaração, que
+são conﬁguradas como verdadeiras quando determinadastokens de interesse são encontradas. Além disso,
+o Flex também fornece uma “facilidade sintática” para se obter uma funcionalidade semelhante por meio
+de declarações de estado, como por exemplo:
+%Start COMMENT
+que pode ser deﬁnida como verdadeira por meio da instruçãoBEGIN(COMMENT). Para se executar uma ação
+somente se uma abertura de comentário foi encontrada anteriormente, você pode condicionar sua regra
+usando COMMENT e a seguinte sintaxe:
+<COMMENT> {
+// o restante do código de sua regra ...
+}
+Há também um estado padrão especial chamadoINITIAL, que está ativo, a menos que você indique
+explicitamente o início de um novo estado. Você pode achar essa construção útil para vários aspectos
+desse trabalho, como por exemplo retorno de erros.
+Sinta-se encorajado a ler a documentação sobreFlex disponibilizada no Canvas, antes de iniciar
+a escrita de seu próprio analisador léxico. Da mesma forma, recomenda-se usar o livro a seguir como
+referência para estudos deFlex e Bison:
+LEVINE, John. Flex & Bison: Text Processing Tools. “ O’Reilly Media, Inc.”, 2009.
+3 Arquivos e Diretórios
+Para começar, crie um diretório onde você deseja fazer o desenvolvimento de seu trabalho (por exemplo,
+PA2) e execute um dos seguintes comandosnesse diretório. Para a versão em C++ do trabalho, você deve
+digitar:
+cd PA2
+make -f /var/tmp/cool/assignments/PA2/Makefile
+Enquanto que para a versão em Java, digite:
+cd PA2
+make -f /var/tmp/cool/assignments/PA2J/Makefile
+(observe o“J” no nome do caminho).
+Este comando irá copiar um número de arquivos para o seu diretório. Alguns dos arquivos serão
+copiados somente para leitura (usando links simbólicos). Você não deve alterar esses arquivos. Na reali-
+dade, se você criar e modiﬁcar cópias particulares desses arquivos, poderá terminar por achar impossível
+concluir o trabalho. Veja instruções mais detalhadas no arquivoREADME.
+Os arquivos que você precisará modiﬁcar são:
+• cool.ﬂex (na versão em C++) /cool.lex (na versão em Java)
+Este arquivo contém um esqueleto de uma descrição léxica para a liguagem Cool. Há comentários
+indicando onde você precisa preencher o código, mas isso não é necessariamente um guia completo.
+Parte deste trabalho é certiﬁcar-se de que você tem umscanner correto e funcional. Exceto pelas
+seções indicadas em contrário, você é bem-vindo para fazer modiﬁcações nesse esqueleto. Você já pode
+realmente construir umscanner com a descrição do esqueleto, mas ele não faz muito. Você deve ler o
+manual Flex/Jlex para descobrir o que esta descrição faz. Quaisquer rotinas auxiliares que você deseja
+escrever devem ser adicionadas diretamente a este arquivo na seção apropriada (veja os comentários no
+arquivo).
+pág. 3 de 7
+--- page 4 ---
+Compiladores Conﬁguração para TPs
+• test.cl
+Este arquivo contém uma entrada de exemplo a ser processada. Ele não cobre toda a especiﬁcação
+léxica da linguagem Cool; mas representa, no entanto, um teste interessante.Não é um bom teste
+para se começar, nem fornece testes adequados para a versão ﬁnal do seuscanner. Parte
+de sua tarefa é apresentar boas entradas de teste e uma estratégia de teste (que deverá ser descrita
+nas anotações sobre a implementação). Não menospreze essa parte da tarefa — é difícil criar uma boa
+entrada para teste e o esquecimento/falta de teste por algo é a causa mais provável da perda de pontos
+durante a avaliação desse trabalho.
+Você deve modiﬁcar este arquivo com testes que você acha que veriﬁquem adequadamente seuscanner.
+A versão do arquivotest.cl fornecida é semelhante a um programa “real” na linguagem Cool, porém
+seus testes não precisam ser. Além disso, você pode manter a porção que julgar adequada dessa versão
+de teste disponibilizada previamente.
+• README
+Este arquivo contém instruções detalhadas para a tarefa, além de várias dicas úteis. Você também
+deve editar esse arquivo para incluir anotações sobre o seu projeto. Você deve explicar as decisões de
+design, por que sua implementação está correta e por que seus casos de teste são adequados. Faz parte
+da avaliação dessa tarefa fornecer uma explicação de forma clara e concisa, bem como comentar sua
+implementação.
+Embora inicialmente esses arquivos estejam incompletos, é possível compilar e executar uma solução
+provisória que apenas lista o nome do arquivo e seu conteúdo (basta usar,make lexer).
+4 Resultados do Scanner
+Você deve seguir a especiﬁcação da estrutura lexical do Cool fornecida na Seção 10 e na Figura 1 do
+Manual de Referência da Linguagem Cool. Seu scanner deve ser robusto – isto é, deve funcionar para
+qualquer entrada concebível. Por exemplo, você deve manipular erros como umEOF ocorrendo no meio
+de um string ou comentário, bem como constantes do tipo string que são muito longas. Estes são apenas
+alguns dos erros que podem ocorrer; veja o manual para o resto.
+Você deve se precaver para realizar uma ﬁnalização normal quando ocorrer um erro fatal.Core dumps
+ou exceções não detectadas são inaceitáveis!
+4.1 Tratamento de Erros
+Todos os erros devem ser passados para oparser. Seu analisador léxico não deve imprimir nada.
+Erros são comunicados aoparser retornando uma token especial de erro chamadaERROR. Note que
+você deve ignorar a token chamada error [em letras minúsculas] para esta tarefa; ela será usada pelo
+parser no TP03.
+Existem vários requisitos para relatar e recuperar de erros léxicos:
+• Quando um caractere inválido (um que não pode iniciar nenhumatoken) for encontrado, um string
+contendo apenas esse caractere deve ser retornado como string de erro. Retomar a análise léxica no
+caractere seguinte.
+Se um string contiver uma nova linha sem caractere de escape, deve-se reportar esse erro como
+“Unterminated string constant” e retomar a análise léxica no início da próxima linha – na suposição
+de que o programador simplesmente esqueceu de fechar/terminar o string.
+• Quando um string é muito longo, relatar o erro como“String constant too long” no string de erro
+do tokenERROR. Se o string contiver caracteres inválidos (isto é, o caractere nulo), relatar isso como
+pág. 4 de 7
+--- page 5 ---
+Compiladores Conﬁguração para TPs
+“String contains null character”. Em ambos os casos, a análise léxica deve continuar após o ﬁnal
+do string, sendo o ﬁnal do string deﬁnido como
+1. o início da próxima linha se uma nova linha sem caractere deescape ocorrer após esses erros serem
+encontrados; ou
+2. após as aspas (”) de fechamento, caso contrário.
+• Se um comentário permanecer aberto quando oEOF for encontrado, relatar este erro com a mensagem
+“EOF in comment”. Não se deve “tokenizar” o conteúdo do comentário simplesmente porque
+o terminador está faltando.De forma análoga para os strings, se umEOF for encontrado antes de
+seu fechamento, relatar este erro como“EOF in string constant”.
+• Se você encontrar “*)” fora de um comentário, relatar este erro como“Unmatched *)”, ao invés de
+representá-lo como* e ).
+4.2 Tabela de Strings
+Programas tendem a ter muitas ocorrências do mesmo lexema. Por exemplo, um identiﬁcador é geralmente
+chamado mais de uma vez em um programa (ou então não é muito útil!).
+Para economizar espaço e tempo, uma prática comum de compilador é armazenar lexemas em uma
+tabela de strings . Será fornecida uma implementação de tabela de strings tanto para a versão em C++
+como para a versão em Java. Veja as seções a seguir para detalhes.
+Há uma questão importante envolvendo a decisão sobre como lidar com os identiﬁcadores especiais
+para as classes básicas (Object, Int, Bool, String), SELF_TYPE, e self. No entanto, esse problema
+não surge até as fases posteriores do compilador — o seuscanner deve tratar os identiﬁcadores especiais
+exatamente como qualquer outro identiﬁcador.
+Não se deve testar se literais inteiros se encaixam na representação especiﬁcada no
+manual Cool— simplesmente crie um símbolo com o texto do literal inteiro como seu conteúdo, inde-
+pendentemente de seu comprimento.
+4.3 Strings
+Seu scanner deve converter caracteres deescape nas constantes de string em seus valores corretos. Por
+exemplo, se o programador digitar esses oito caracteres:
+“ a b \ n c d ”
+seu scanner retornaria o tokenSTR_CONST cujo valor semântico é esses 5 caracteres:
+a b \n c d
+em que \n representa o caractere ASCII para uma nova linha.
+Seguindo a especiﬁcação na página 15 do manual Cool, você deve retornar um erro para um string
+contendo o caractere nulo. No entanto, a sequência de dois caracteres
+\ 0
+é permitida, mas deve ser convertida para o caractere
+0 .
+pág. 5 de 7
+--- page 6 ---
+Compiladores Conﬁguração para TPs
+4.4 Outras Observações
+Seu scanner deve manter a variávelcurr_lineno que indica qual linha no texto/arquivo de origem está
+sendo processada no momento. Esse recurso ajudará oparser na exibição de mensagens de erro úteis.
+Você deve ignorar a tokenLET_STMT. Ela será usada apenas pelo parser (no TP03). Por ﬁm,
+observe que, se a especiﬁcação léxica estiver incompleta (determinadas entradas não possuirem nenhuma
+expressão regular que as corresponda), os scanners gerados por Flex e Jlex fazem coisas indesejáveis.
+Certiﬁque-se de que sua especiﬁcação esteja completa.
+5 Notas adicionais para a versão em C++
+Se você estiver trabalhando na versão em Java, pule para a seção seguinte.
+• Cada chamada do scanner retorna a próxima token e o lexema de entrada. O valor retornado pela
+funçãocool_yylex éumcódigointeirorepresentandoacategoriasintática(por exemplo, literalinteiro,
+ponto-e-vírgula, palavra-chaveif, etc.). Os códigos para todas astokens são deﬁnidos no arquivocool-
+parse.h. O segundo componente, o valor semântico ou lexema, é colocado na união (declarada de forma
+global) cool_yylval, que é do tipoYYSTYPE. O tipoYYSTYPE também é deﬁnido emcool-parse.h. As
+tokens para símbolos de caractere único (por exemplo, “;” e “,”) são representados apenas pelo valor
+inteiro (ASCII) do próprio caractere. Todas astokens de caracteres únicos estão listados na gramática
+da linguagem Cool no manual disponibilizado.
+• Para identiﬁcadores de classe, identiﬁcadores de objeto, inteiros e strings, o valor semântico deve ser
+um valor do tipoSymbol (ver item seguinte) armazenado no campocool_yylval.symbol. Para
+constantes booleanas, o valor semântico é armazenado no campocool_yylval.boolean. Exceto para
+erros (veja mais adiante), os lexemas das outrastokens não contêm nenhuma informação interessante.
+• É fornecida uma implementação de tabela de strings, que é discutida em detalhes naDescrição do
+Código de Suporte para Implementação da Linguagem COOL (ou em inglês, A Tour do Cool Support
+Code) e na documentação do código. Por enquanto, você só precisa saber que o tipo das entradas
+da tabela de strings éSymbol, pois ela deverá ser usada para armazenar o valor semântico (lexema)
+associado com identiﬁcadores de classe, identiﬁcadores de objeto, inteiros e strings.
+• Quando um erro léxico é encontrado, a rotina cool_yylex deve retornar a token ERROR. O
+valor semântico é um string que representa a mensagem de erro, que é armazenada no campo
+cool_yylval.error_msg (observe que esse campo é um string comum,não um símbolo). Con-
+sulte a seção anterior para obter informações sobre o que colocar em mensagens de erro.
+6 Notas adicionais para a versão em Java
+Se você estiver trabalhando na versão em C++, pule esta seção.
+• Cada chamada do scanner retorna a próxima token e o lexema da entrada. O valor retornado pelo
+método CoolLexer.next_token é um objeto da classejava_cup.runtime.Symbol. Este objeto
+tem um campo representando a categoria sintática de umatoken (por exemplo, literal de inteiro, ponto-
+e-vírgula, a palavra-chaveif, etc.). Os códigos sintáticos para todos astokens são deﬁnidos no arquivo
+TokenConstants.java. O componente, o valor semântico ou lexema (se houver), também é colocado em
+um objeto java_cup.runtime.Symbol. A documentação da classe java_cup.runtime.Symbol,
+bem como outro código de suporte, foi disponibilizado viaCanvas. Exemplos de seu uso também
+estão disponíveis.
+pág. 6 de 7
+--- page 7 ---
+Compiladores Conﬁguração para TPs
+• Para identiﬁcadores de classe, identiﬁcadores de objeto, inteiros e strings, o valor semântico deve ser
+do tipoAbstractSymbol (ver item seguinte). Para constantes booleanas, o valor semântico é do tipo
+java.lang.Boolean. Exceto para erros (veja mais adiante), os lexemas das outrastokens não contêm
+nenhuma informação interessante. Como o campovalue da classejava_cup.runtime.Symboltem
+tipo genérico java.lang.Object, você precisará convertê-lo em um tipo apropriado antes de chamar
+qualquer método sobre nele.
+• É fornecida uma implementação de tabela de strings, que é deﬁnida emAbstractTable.java. Por en-
+quanto, você só precisa saber que o tipo das entradas da tabela de strings éAbstractSymbol, pois ela
+deverá ser usada para armazenar o valor semântico (lexema) associado com identiﬁcadores de classe,
+identiﬁcadores de objeto, inteiros e strings..
+• Quando um erro léxico é encontrado, a rotina CoolLexer.next_token deve retornar um objeto
+java_cup.runtime.Symbol cuja categoria sintática éTokenConstants.ERRORe cujo valor se-
+mântico é o string de mensagem de erro. Veja Seção 4 para informações sobre como construir mensagens
+de erro.
+7 Testando o Scanner
+Existem pelo menos duas maneiras de testar seuscanner. A primeira maneira é gerar “entradas-exemplos”
+e analisá-las usandolexer, que imprime o número da linha e o lexema de cadatoken reconhecida pelo seu
+scanner.
+Uma outra maneira de realizar testes, quando você acreditar que seu scanner está funcionando
+corretamente, é tentar executarmycoolc para invocar seu analisador léxico junto com todas as outras fases
+do compilador (que serão fornecidas). Neste caso,mycoolc funcionará como um compilador completo para
+a linguagem Cool que você pode experimentar sobre qualquer programa de teste.
+8 O Que Entregar
+Quando você estiver pronto para entregar a tarefa, digitemake submit-clean no diretório em que você
+preparou seu trabalho. Essa ação removerá todos os arquivos desnecessários, como arquivos de objeto,
+arquivos de classe, core dumps, etc. Certiﬁque-se, também, de ter editado corretamente o arquivo RE-
+ADME antes de enviar seu trabalho. O código, a saída e anotações confusas e pouco claras terão um efeito
+negativo na sua nota. Aproveite bem seu tempo para explicar de forma clara (e concisa!) seus resultados.
+Depois de concluído o trabalho, você deverá realizar a entrega dessa tarefa. Para tanto, você
+deve fazer as seguintes atividades:
+1. Assegurar-se que que seu código esteja no arquivocool.flex para a implementação em C++ (ou
+cool.lex para a implementação em Java) e de de que ele compila e funciona corretamente :-).
+2. Modiﬁcar o ﬁnal do arquivoREADME. Parte dessa tarefa é preencher oREADME com anotações sobre o
+seu projeto. Você deve explicar as decisões de design, explicar por que seu código está correto e por
+que seus casos de teste são adequados. Faz parte da tarefa explicar de forma clara e concisa, bem como
+comentar o seu código. Apenas altere o arquivo fornecido.
+3. Compactar e codiﬁcar o subdiretórioPA2, por exemplo da seguinte forma:
+tar cvzf PA2.tar.gz PA2
+uuencode PA2.tar.gz PA2.tar.gz > PA2.u
+rm PA2.tar.gz
+4. Entregar o arquivoPA2.u via Canvas.
+pág. 7 de 7
+
+======================================================================
+03-TP Análise Sintática.pdf
+======================================================================
+
+--- page 1 ---
+Compiladores Conﬁguração para TPs
+Trabalho Prático N.03 (Valor: 10 pontos)
+Entrega: Conforme Tarefa no Canvas
+1 Introdução
+Neste trabalho, você irá implementar umparser para a linguagem Cool. Esta tarefa faz uso de duas
+ferramentas: um gerador deparser (a ferramenta para C++ se chamaBison; enquanto a ferramenta em
+Java é chamadaCUP) e um pacote para manipulação de árvores.
+A saída de seu parser deve ser uma árvore de sintaxe abstrata (Abstract Syntax Tree– AST) e você
+deverá construir esta AST por meio da especiﬁcação de ações semânticas junto ao gerador deparser.
+Você certamente irá precisar fazer referência e utilizar a estrutura sintática da linguagemCool, que
+pode ser encontrada na Figura 1 doManual de Referência de Cool. A documentação de bison and CUP
+pode ser encontradaonline. A versão em C++ do pacote para manipulação de árvores se encontra des-
+crita junto ao material deSuporte para Implementação da Linguagem Cool(Tour of Cool Support Code).
+Já a documentação para versão em Java do pacote para manipulação de árvores se encontra disponí-
+vel em https://web.stanford.edu/class/archive/cs/cs143/cs143.1112/javadoc/cool_ast/index.
+html?package-tree.html. Você ira precisar de consultar informações sobre o pacote de manipulação de
+árvores na realização deste trabalho e dos próximos.
+Há muita informação nesta especiﬁcação e você precisa saber a maior parte para conseguir escrever
+um parser funcional. Por favor, leia atentamente toda essa especiﬁcação.
+Você pode trabalhar em grupo de até 05 pessoas para esta tarefa (grupos maiores não serão aceitos
+em nenhuma hipótese).
+2 Arquivos e Diretórios
+Para começar, crie um diretório onde você deseja fazer o desenvolvimento de seu trabalho (por exemplo,
+PA3) e execute um dos seguintes comandosnesse diretório. Para a versão em C++ do trabalho, você deve
+digitar:
+cd PA3
+make -f /var/tmp/cool/assignments/PA3/Makefile
+Enquanto que para a versão em Java, digite:
+cd PA2
+make -f /var/tmp/cool/assignments/PA3J/Makefile
+(observe o“J” no nome do caminho).
+Este comando irá copiar alguns arquivos para o seu diretório. Alguns dos arquivos serão copiados no
+modo “somente leitura” (usando links simbólicos). Você não deve alterar esses arquivos. Na realidade, se
+você criar e modiﬁcar cópias particulares desses arquivos, poderá terminar por achar impossível concluir
+o trabalho. Veja instruções mais detalhadas no arquivoREADME.
+Os arquivos que você precisará modiﬁcar são:
+• cool.y (na versão em C++) /cool.cup (na versão em Java)
+Este arquivo contém um esqueleto de uma descrição doparser para a linguagem Cool. A seção de
+declaração está quase completa, mas você precisará adicionar declarações de tipo adicionais para novos
+não-terminais que você introduzir. Já lhe serão fornecidas declarações de nomes e de tipos para os
+terminais. Você também pode precisar adicionar declarações de precedência. A seção de regras, no
+pág. 1 de 5
+--- page 2 ---
+Compiladores Conﬁguração para TPs
+entanto, se encontra bastante incompleta. Já lhe foram fornecidas algumas partes de algumas regras.
+Então, você não precisa modiﬁcar esse código para obter uma solução funcional (parser), mas será
+se desejar, você é livre :) . No entanto, você não deve assumir que qualquer regra especíﬁca esteja
+completa.
+• good.cl and bad.cl
+Esses arquivos permitem testar alguns recursos da gramática da linguagemCool. Você deve adicionar
+testes para garantir quegood.cl realize testes de toda e qualquer “construção legal” da gramática e que
+bad.cl realize testes do maior número possível de erros de análise em um único arquivo. Você deve
+explicar tanto seus testes nesses arquivos e como colocar comentários gerais no arquivoREADME.
+• README
+Como de costume, esse arquivo conterá as anotações sobre a realização de sua tarefa. Explique suas
+decisões de design, seus casos de teste e por que você acredita que seu programa é correto e robusto.
+Faz parte da tarefa explicar as coisas nesse texto, bem como comentar o seu código.
+3 Testando o Parser
+Você irá precisar de umscanner (analisador léxico) funcionando corretamente para ser capaz de testar
+seu parser. Você pode usar tanto sua própria implementação de scanner (feito no trabalho anterior)
+como a versão oﬁcial fornecida junto com o compiladorcoolc. Como padrão, oscanner da versão oﬁcial
+do compilador coolc é utilizado; para modiﬁcar esse comportamento basta substituir o executávellexer
+(presente no diretório do projeto por meio de umaligação simbólicaou atalho) pelo seu próprioscanner
+(desenvolvido anteriormente). Não assuma automaticamente que oscanner utilizado está livre de erros –
+erros ocultos (não identiﬁcados) noscanner podem causar problemas misteriosos no comportamento do
+seu parser.
+Você deverá executar/testar seuparser por meio do “shell script” myparserque realizar uma chamada
+parao scanner seguidadeumachamadaparao parser. Observeque myparserusaum“ ﬂag ” -pparadepurar
+o parser; esse “ﬂag ” faz com que muitas informações sobre o que oparser está fazendo sejam impressas na
+saída padrão. Além disso, tantoBison quanto CUP produzem um listagem legível das tabelas sintáticas
+LALR(1) no arquivocool.output. Examinar esse arquivo pode também ser útil para depurar a deﬁnição
+do seuparser.
+Você deve testar seu compilador em entradas “boas” e “ruins” para ver se tudo está funcionando
+corretamente. Lembre-se, os erros na deﬁnição de seu parser podem se manifestar em qualquer lugar.
+Seu parser será avaliado usando a versão oﬁcial do analisador léxico (scanner) do compiladorcoolc.
+Assim, mesmo que você faça a maior parte do trabalho usando seu próprioscanner, você deve testar seu
+parser com a versão oﬁcial do analisador léxico (scanner) do compiladorcoolc antes de entregar a tarefa.
+4 Resultados do Parser
+Você deve especiﬁcar um conjunto de ações semânticas que sejam capazes de construir uma Árvore Sintá-
+tica Abstrata, ouAbstrat Syntax Tree (AST). A raiz (e somente a raiz) da AST deve ser do tipoprogram.
+Para programas que forem analisados com êxito, a saída doparser é uma listagem da AST.
+Para programas que possuem erros, a saída consiste das mensagens de erro do parser. Você já receberá
+uma rotina de informe de erros que imprime/exibe mensagens de erro em um formato padrão; por favor,
+não a modiﬁque. Você não deve invocar esta rotina diretamente em suas ações semânticas;Bison/CUP
+realiza a invocação dela automaticamente quando um problema é detectado.
+Seu parser só precisa trabalhar para programas contidos em um único arquivo – não se preocupe em
+compilar múltiplos arquivos.
+pág. 2 de 5
+--- page 3 ---
+Compiladores Conﬁguração para TPs
+5 Tratamento de Erros
+Você deve usar o (pseudo) não-terminalerror para adicionar capacidades de manipulação de erros ao
+seu parser. O objetivo de error é permitir que oparser continue operando mesmo após algum erro (na
+medida em que se possa antecipar sua ocorrência). Porém, saiba que essa abordagem não representa uma
+“solução universal” e seuparser pode ﬁcar completamente confuso.
+Veja a documentação doBison/CUP sobre as formas de como melhor usarerror. Em seu arquivo
+README, você deve descrever quais erros você tentou capturar. Além disso, seu arquivo de testebad.cl
+deve ter algumas instâncias que ilustrem tais erros a partir dos quais seuparser pode se recuperar. Para
+receber uma avaliação total, seu parser deve se recuperar pelo menos das seguintes situações:
+• Se houver um erro em uma deﬁnição de classe, mas a classe for ﬁnalizada corretamente e a próxima
+classe estiver sintaticamente correta, o seuparser deverá ser capaz de reiniciar nessa próxima deﬁnição
+de classe.
+• Da mesma forma, seuparser deve se recuperar de erros na deﬁnição de:
+1. features (atributo estático ou dinâmico) de uma classe, passando para a próximafeature);
+2. uma “ligação” de uma variável em um comandolet, passando para a próxima variável; e
+3. uma expressão dentro de um bloco{...}, continuando depois do}.
+Não se preocupe excessivamente com os números de linha que aparecem nas mensagens de erro
+geradas pelo parser. Se o parser estiver funcionando corretamente, o número da linha geralmente será
+a linha em que ocorreu o erro. Para construções erradas quebradas em várias linhas, o número da linha
+provavelmente será a última linha da construção.
+6 Pacote de Manipulação de Árvore
+Há uma documentação extensa sobre a versão C++ do pacote para manipulação árvores a ser uti-
+lizado na implementação de AST para Cool junto ao material de Suporte para Implementação da
+Linguagem Cool (Tour of Cool Support Code). A documentação para a versão Java está disponível
+na página emhttps://web.stanford.edu/class/archive/cs/cs143/cs143.1112/javadoc/cool_ast/
+index.html?package-tree.html. Você certamente precisará da maioria dessas informações contidas
+nessa documentação para implementar umparser funcional.
+7 Observações
+Você pode usar declarações de precedência, mas apenas para expressões. Não deve usar declarações de
+precedência cegamente (ou seja, não trate um conﬂito reduzir/empilhar em sua gramática, adicionando
+regras de precedência até que ele desapareça).
+A construção let na linguagemCool introduz uma ambiguidade na linguagem (tente construir um
+exemplo se você não estiver convencido). O manual resolve a ambiguidade dizendo que uma expressão
+let se estende o mais à direita possível. A ambiguidade aparecerá em seu parser como um conﬂito
+reduzir/empilhar envolvendo as produções delet.
+Esse problema tem uma solução simples, mas um pouco obscura. Não lhe será dito exatamente como
+resolvê-lo, mas você receberá uma boa dica.
+No compilador oﬁcialcoolc, implementou-se a resolução do conﬂito reduzir/empilhar da construção
+let usando um recurso Bison/CUP que permite que precedência seja associada a quais quer produções
+(não apenas operadores). Consulte a documentação deBison/CUP para obter maiores informações sobre
+como usar este recurso.
+pág. 3 de 5
+--- page 4 ---
+Compiladores Conﬁguração para TPs
+Como o compiladormycoolc usa “pipes” (redirecionamentos) para estabelecer a comunicação de um
+estágio com o próximo, qualquer caractere estranho produzido pelo seuparser pode causar erros; em
+particular, o analisador semântico pode não ser capaz de processar a AST que seu parser produzir.
+8 Notas adicionais para a versão em C++
+Se você estiver trabalhando na versão em Java, pule para a seção seguinte.
+• Executar Bison no arquivo inicial do esqueleto produzirá alguns avisos sobre “não terminais inúteis” e
+“regras inúteis”. Isso ocorre porque alguns dos não terminais e regras nunca serão usados, mas esses
+avisos devem desaparecer quando o seuparser estiver completo.
+• Você deve declarar “tipos” emBison para seus não terminais e terminais que possuírem atributos. Por
+exemplo, no esqueletocool.y, você encontra a declaração:
+%type <program> program
+Esta declaração diz que o não terminalprogram tem tipo <program>.
+O uso da palavra “tipo” aqui é enganoso; o que essa declaração realmente signiﬁca é que o atributo
+para o não terminalprogram é armazenado no membroprogram da declaração union em cool.y, que
+possui tipo Program.
+Por meio da especiﬁcação de “tipo”
+%type <member_name> X Y Z ...
+você está instruindo oBison que que os atributos dos não terminais (ou terminais)X, Y, andZ possuem
+o tipo apropriado para o membro denominadomember_name da união.
+Todos os membros daunião e seus tipos têm nomes semelhantes por escolha de projeto. É apenas uma
+coincidência no exemplo acima que o não terminalprogram tenha o mesmo nome de um membro da
+união.
+É fundamental que você declare os tipos corretos para os atributos dos símbolos gramaticais; uma falha
+em fazê-lo praticamente garante que oparser não funcionará. Você não precisa declarar tipos para
+símbolos da sua gramática que não possuam atributos.
+O veriﬁcador de tipos de compilador g++ reclama se você usar os construtores de árvore com os
+parâmetros de tipos incorretos. Se você ignorar os avisos, o programa poderá falhar quando o construtor
+perceber que está sendo usado incorretamente. Além disso,Bison pode reclamar se você cometer erros
+de tipagem. Preste atenção a qualquer aviso. Não se surpreenda se seu programa falhar quandoBison
+ou g++ derem mensagens de aviso.
+9 Notas adicionais para a versão em Java
+Se você estiver trabalhando na versão em C++, pule esta seção.
+• Você deve declarar “tipos” emCUP para os seus não terminais e terminais que possuírem atributos. Por
+exemplo, no esqueleto que está no arquivocool.cup, vocé encontra a seguinte declaração:
+nonterminal program program;
+pág. 4 de 5
+--- page 5 ---
+Compiladores Conﬁguração para TPs
+Esta declaração diz que o não terminalprogram possui “tipo” program.
+É fundamental que você declare os tipos corretos para os atributos dos símbolos gramaticais; uma falha
+em fazê-lo praticamente garante que o seuparser não funcionará. Você não precisa declarar tipos de
+símbolos da sua gramática que não possuam atributos.
+O veriﬁcador de tipos do compilador javac reclama se você usar os construtores de árvore com os
+parâmetros de tipos incorretos. Se você corrigir os erros com conversões frívolas, seu programa poderá
+lançar uma exceção quando o construtor perceber que está sendo usado incorretamente. Além disso,
+CUP pode reclamar se você cometer erros de tipagem.
+10 O Que Entregar
+Quando você estiver pronto para entregar a tarefa, digitemake submit-clean no diretório em que você
+preparou seu trabalho. Essa ação removerá todos os arquivos desnecessários, como arquivos de objeto,
+arquivos de classe,core dumps, etc. Certiﬁque-se, também, de ter editado corretamente o arquivo RE-
+ADME antes de enviar seu trabalho. O código, a saída e anotações, quando confusas e pouco claras, terão
+um efeito negativo na sua nota. Aproveite bem seu tempo para explicar de forma clara (e concisa!) seus
+resultados.
+Depois de concluído o trabalho, você deverá realizar a entrega dessa tarefa. Para tanto, você
+deve fazer as seguintes atividades:
+1. Assegurar-se que que seu código esteja no arquivo cool.flex para a implementação em C++ (ou
+cool.lex para a implementação em Java) e de de que ele compila e funciona corretamente :) .
+2. Modiﬁcar o ﬁnal do arquivoREADME. Parte dessa tarefa é preencher oREADME com anotações sobre o
+seu projeto. Você deve explicar as decisões de design, explicar por que seu código está correto e por
+que seus casos de teste são adequados. Faz parte da tarefa explicar de forma clara e concisa, bem como
+comentar o seu código. Apenas altere o arquivo fornecido.
+3. Compactar e codiﬁcar o subdiretórioPA3, por exemplo da seguinte forma:
+tar cvzf PA3.tar.gz PA3
+uuencode PA3.tar.gz PA3.tar.gz > PA3.u
+rm PA3.tar.gz
+4. Entregar o arquivoPA3.u via Canvas.
+pág. 5 de 5
+
+======================================================================
+04-TP Análise Semântica.pdf
+======================================================================
+
+--- page 1 ---
+Compiladores Conﬁguração para TPs
+Trabalho Prático N.04 (Valor: 10 pontos)
+Entrega: Conforme Tarefa no Canvas
+1 Introdução
+Neste trabalho, você implementará a análise semântica (estática) da linguagemCool. Você deverá usar
+as árvores de sintaxe abstrata (AST) construídas peloparser para veriﬁcar se um programa está em
+conformidade com a especiﬁcação da linguagemCool. Seu analisador semântico deve rejeitar programas
+errados; enquanto que, para programas corretos, ele deve reunir/produzir certas informações para serem
+usadas pelo gerador de código. A saída do analisador semântico será uma AST anotada para uso pelo
+gerador de código.
+Nesta tarefa, você terá muito mais espaço para tomar decisões de design do que teve nas anteriores.
+Sua implementação estará correta desde que seja capaz veriﬁcar se programas escritos na linguagemCool
+se encontram em conformidade com a especiﬁcação formal da mesma. Não existe uma maneira “certa” e
+única de se realizar essa tarefa, mas certamente existem maneiras erradas! Acredita-se que existem várias
+práticas padronizadas que podem facilitar a obtenção de uma implementação correta. Nas aulas teóricas,
+o objetivo principal foi transmitir essas informações a você. No entanto, o resultado ﬁnal vai depender
+muito de você. Portanto, para tudo o que você decidir fazer, esteja preparado para se justiﬁcar e explicar
+a solução adotada.
+Você precisará consultar as regras de tipagem, regras de escopo de identiﬁcador e outras restrições
+da linguagemCool, que se encontram deﬁnidas noManual de Referência de Cool. Você também precisará
+adicionar métodos e membros de dados às deﬁnições de classe AST para esta fase. As funções que o pacote
+em árvore fornece estão documentadas junto ao material deSuporte para Implementação da Linguagem
+Cool (Tour of Cool Support Code).
+Há muitas informações nesta especiﬁcação de trabalho e você precisa da maioria delas para escrever
+um analisador semântico que funcione corretamente.Leia essa especiﬁcação detalhadamente!Em uma
+descrição de alto nível, seu veriﬁcador semântico precisará executar as seguintes tarefas principais:
+1. Considerar cada uma das classes contidas no programa e construir um grafo de herança;
+2. Veriﬁcar se o grafo é bem formado;
+3. Para cada classe:
+(a) Percorrer a AST, reunindo todas as declarações visíveis em uma tabela de símbolos;
+(b) Veriﬁcar cada expressão para garantir a correção dos tipos envolvidos; e
+(c) Anotar a AST com informações sobre tipos.
+Esta lista de tarefas não é exaustiva; cabe a você implementar ﬁelmente a especiﬁcação detalha no
+manual.
+Você pode trabalhar em grupo de até 05 pessoas para esta tarefa (grupos maiores não serão aceitos
+em nenhuma hipótese).
+2 Arquivos e Diretórios
+Para começar, crie um diretório onde você deseja fazer o desenvolvimento de seu trabalho (por exemplo,
+PA4) e execute um dos seguintes comandosnesse diretório. Para a versão em C++ do trabalho, você deve
+digitar:
+pág. 1 de 6
+--- page 2 ---
+Compiladores Conﬁguração para TPs
+cd PA4
+make -f /var/tmp/cool/assignments/PA4/Makefile
+Enquanto que para a versão em Java, digite:
+cd PA4
+make -f /var/tmp/cool/assignments/PA4J/Makefile
+(observe o“J” no nome do caminho).
+Este comando irá copiar alguns arquivos para o seu diretório. Alguns dos arquivos serão copiados
+como “somente leitura” (usando links simbólicos). Você não deve alterar esses arquivos. Na realidade, se
+você criar e modiﬁcar cópias particulares desses arquivos, poderá terminar por achar impossível concluir
+o trabalho. Veja instruções mais detalhadas no arquivoREADME.
+A seguir, descreve-se os arquivos mais importantes para cada versão do projeto.
+2.1 Versão em C++
+Esta é uma lista dos arquivos que você pode querer modiﬁcar.
+• cool-tree.h
+Esse arquivo é onde as extensões deﬁnidas por você para os nós da árvore de sintaxe abstrata (AST)
+são colocadas. Você provavelmente precisará adicionar declarações adicionais, masnão modiﬁque as
+declarações já existentes.
+• semant.cc
+Este é o arquivo principal para sua implementação da fase de análise semântica. Ele contém alguns
+símbolos predeﬁnidos para sua conveniência e o início de uma implementação deClassTable para
+representar o grafo de herança. Você pode optar por usá-los ou ignorá-los.
+O analisador semântico é invocado por meio da chamada ao método semant() da classe pro-
+gram_class. A declaração de classe paraprogram_class está emcool-tree.h. Quaisquer declarações
+de método adicionadas acool-tree.h devem ser implementadas neste arquivo.
+• semant.h
+Este arquivo é o arquivo de cabeçalho parasemant.cc. Você deve adicionar neste arquivo quaisquer
+declarações adicionais necessárias (que não em estejam emcool-tree.h).
+• good.cl e bad.cl
+Esses arquivos servem testar alguns recursos semânticos. Você deve adicionar testes para garantir que
+good.cl realize o maior número possível de combinações semânticas legais e quebad.cl cometa o maior
+número possível de erros semânticos. Não é possível exercitar todas as combinações possíveis em um
+arquivo; você é responsável apenas por obter uma cobertura razoável. Explique seus testes nesses
+arquivos e coloque quaisquer comentários gerais no arquivoREADME.
+• README
+. Este arquivo conterá anotações sobre a realização de sua tarefa. Para essa atribuição, é fundamental
+que você explique as decisões de design, como seu código está estruturado e os motivos que levam
+você a acreditar que o design é bom (ou seja, razões para sua implementação estar correta e robusta).
+Faz parte da tarefa explicar tais decisões por meio de texto e também comentar seu código. Arquivos
+READMEinadequadosserão penalizadosmais fortementenesta atribuição, pois oREADMEé aprincipal
+fonte de informações que se tem para entender seu código ﬁnal.
+pág. 2 de 6
+--- page 3 ---
+Compiladores Conﬁguração para TPs
+2.2 Versão em Java
+Esta é uma lista dos arquivos que você pode querer modiﬁcar.
+• cool-tree.java
+Este arquivo contém as deﬁnições para os nós AST e é o arquivo principal para sua implementação
+da fase de análise semântica. Você precisará adicionar o código para sua fase de análise semântica
+neste arquivo. O analisador semântico é invocado por meio da chamada ao métodosemant()da classe
+programa. Não modiﬁque as declarações já existentes.
+• ClassTable.java
+Esta classe é um espaço reservado para alguns métodos úteis (incluindo relatórios de erros e inicialização
+de classes básicas). Você pode aprimorá-lo para uso em seu analisador.
+• TreeConstants.java
+Este arquivo deﬁne algumas constantes simbólicas que são muito úteis.
+• good.cl e bad.cl
+Esses arquivos servem para testar alguns recursos semânticos. Você deve adicionar testes para garantir
+que good.cl realize o maior número possível de combinações semânticas legais e quebad.cl cometa o
+maior número possível de erros semânticos. Não é possível exercitar todas as combinações possíveis em
+um arquivo; você é responsável apenas por obter uma cobertura razoável. Explique seus testes nesses
+arquivos e coloque quaisquer comentários gerais no arquivoREADME.
+• README
+Este arquivo conterá anotações sobre a realização de sua tarefa. Para essa atribuição, é fundamental
+que você explique as decisões de design, como seu código está estruturado e os motivos que levam
+você a acreditar que o design é bom (ou seja, razões para sua implementação estar correta e robusta).
+Faz parte da tarefa explicar tais decisões por meio de texto e também comentar seu código. Arquivos
+READMEinadequadosserão penalizadosmais fortementenesta atribuição, pois oREADMEé aprincipal
+fonte de informações que se tem para entender seu código ﬁnal.
+3 Caminhamento na Árvore de Sintaxe Abstrata
+Como resultado do trabalho prático anterior, seuparser cria árvores de sintaxe abstratas (ASTs). O
+método dump_with_types, deﬁnido na maioria dos nós da AST, ilustra como percorrer a AST e
+coletar informações dela. Esse estilo solução algorítmica – envolvendo um caminhamento recursivo de
+uma estrutura de árvore complexa – é muito importante, porque representa é uma maneira muito natural
+de se organizar tarefas e processamentos em ASTs.
+Sua implementação para este trabalho deve: (1) percorrer a árvore; (2) gerenciar várias informações
+que você recolher da árvore; e (3) usar essas informações para validar a semântica da linguagemCool. Um
+caminhamento completo da AST é chamado de “passo”. Você provavelmente precisará fazer pelo menos
+dois passos pela AST para veriﬁcar tudo.
+Você provavelmente precisará anexar informações personalizadas aos nós da AST. Para fazer isso,
+você deve modiﬁcar cool-tree.h (na versão em C++) oucool-tree.java (na versão em Java) diretamente.
+Na versão C++, as implementações de métodos que você deseja adicionar devem SER codiﬁcadas em
+semant.cc.
+4 Herança
+Os relacionamentos de herança especiﬁcam um grafo direcionado de dependências entre classe. Um re-
+quisito típico da maioria das linguagens com herança é que o grafo de herança seja acíclico. Cabe ao
+pág. 3 de 6
+--- page 4 ---
+Compiladores Conﬁguração para TPs
+seu veriﬁcador semântico impor esse requisito. Uma maneira bastante fácil de fazer isso é construir uma
+representação do grafo de tipos e veriﬁcar a existência de ciclos no mesmo.
+Além disso, a linguagemCool possui restrições de herança das classes básicas (consulte o manual).
+Também é um erro se a classeA herda da classeB, mas a classeB não está deﬁnida.
+O esqueleto do projeto inclui deﬁnições apropriadas de todas as classes básicas. Você precisará
+incorporar essas classes na hierarquia de herança.
+Sugerimos que você divida sua fase de análise semântica em dois componentes menores. Primeiro,
+veriﬁque se o grafo de herança está bem deﬁnido, o que signiﬁca que todas as restrições relativas à herança
+são atendidas. Se o grafo de herança não estiver bem deﬁnido, é aceitável interromper a compilação (após
+a impressão de mensagens de erro apropriadas, é claro!). Segundo, veriﬁque todas as outras condições
+semânticas. É muito mais fácil implementar esse segundo componente se já se conhece o grafo de herança
+e se o mesmo é legal (isto é, bem formado).
+5 Nomes e Escopo
+Uma parte importante de qualquer veriﬁcador semântico é o gerenciamento de nomes. O problema
+especíﬁco é determinar qual declaração está em vigor para cada uso de um identiﬁcador, especialmente
+quando os nomes podem ser reutilizados. Por exemplo, sei for declarado em duas expressõeslet, uma
+aninhada na outra, em qualquer lugar em quei for referenciado, a semântica da linguagem especiﬁcará
+qual declaração está em vigor. É tarefa do veriﬁcador semântico acompanhar a qual declaração um
+determinado nome se refere.
+Conforme discutido na aula, uma tabela de símbolos é uma estrutura de dados conveniente para
+gerenciar nomes e escopo. Você pode usar implementação disponibilizada (no código de suporte) de
+tabelas de símbolos para seu projeto. Essa implementação fornece métodos para inserir, sair e aumentar
+escopos, conforme necessário. Você também pode implementar sua própria tabela de símbolos, é claro.
+Além do identiﬁcadorself, que está implicitamente vinculado em todas as classes, há quatro maneiras
+pelas quais um nome de objeto pode ser introduzido na linguagemCool:
+• deﬁnições de atributos;
+• parâmetros formais de métodos;
+• expressões let;
+• ramos (branches) de instruçõescase.
+Além dos nomes dos objetos, também existem nomes de métodos e nomes de classes. É um erro
+usar qualquer nome que não tenha uma declaração correspondente. Nesse caso, no entanto, o analisador
+semântico não deve abortar a compilação depois de descobrir esse erro. Lembre-se de que nem classes,
+nem métodos e nem atributos precisam ser declarados antes do uso. Pense em como isso afetará sua
+análise!
+6 Veriﬁcação de Tipos
+A veriﬁcação de tipo é outra função importante do analisador semântico. O analisador semântico deve
+veriﬁcar se tipos válidos são declarados onde necessário. Por exemplo, os tipos de retorno de métodos
+devem ser declarados. Usando essas informações, o analisador semântico também deve veriﬁcar se toda
+expressão tem um tipo válido de acordo com as regras de tipo. As regras de tipo são discutidas em detalhes
+no Manual de Referência de Coole nosslides usados nas aulas teóricas do curso.
+Uma questão difícil é determinar o que fazer se uma expressão não tiver um tipo válido de acordo com
+as regras. Primeiro, uma mensagem de erro deve ser impressa com o número da linha e uma descrição do
+que deu errado. É relativamente fácil enviar mensagens de erro informativas na fase de análise semântica,
+pág. 4 de 6
+--- page 5 ---
+Compiladores Conﬁguração para TPs
+porque geralmente é óbvio qual é o erro. Esperamos que você forneça mensagens de erro informativas.
+Segundo, o analisador semântico deve tentar recuperar e continuar.
+Espera-se que seu analisador semântico se recupere, mas não se espera que ele evite erros em cascata.
+Um mecanismo de recuperação simples é atribuir o tipoObject a qualquer expressão que não possa receber
+um tipo (este método foi usado na implementação padrão do compiladorcoolc).
+7 Interface com o Gerador de Código
+Para que o analisador semântico funcione corretamente com o restante do compiladorcoolc, deve-se tomar
+cuidadoparaseutilizaradequadamenteainterfacecomo geradordecódigo . Adotou-sedeliberadamente
+uma interface muito simples e ingênua para evitar restringir quaisquer impulsos criativos que você venha a
+ter na análise semântica. No entanto, há uma coisa que você necessariamente deve fazer. Para cada nó de
+expressão, seu campotype deve ser “setado” como oSymbol nomeando o tipo inferido pelo seu veriﬁcador
+de tipos. Este Symbol deve ser o resultado da chamada do métodoadd_string (na versão em C++) ou
+addString (na versão em Java) pertencente aidtable. A expressão especial no_expr deve receber o tipo
+No_type, que é um símbolo predeﬁnido no esqueleto do projeto.
+8 Saída Esperada
+Para programas incorretos, a saída da análise semântica são mensagens de erro. Você deve se recuperar
+de todos os erros, exceto para hierarquias de classe mal formadas. Também é esperado que você produza
+erros completos e informativos. Supondo que a hierarquia de herança seja bem formada, o veriﬁcador
+semântico deve capturar e relatar todos os erros semânticos no programa.
+Suas mensagens de erro não precisam ser idênticas às do compilador padrãocoolc. Fornecemos a
+você métodos simples de relatório de errosostream& ClassTable::semant_error(Class_)(na versão
+em C++) ePrintStream ClassTable.semantError(class_)(na versão em Java).
+Essa rotina utiliza um nóClass_ (na versão em C++) ouclass_ (na versão em Java) e retorna um
+ﬂuxo de saída que você pode usar para gravar mensagens de erro. Como oparser garante que os nós
+Class_ / class_ armazenem o arquivo no qual a classe foi deﬁnida (lembre-se de que as deﬁnições de classe
+não podem ser divididas entre arquivos), o número da linha da mensagem de erro pode ser obtido a partir
+do nó da AST em que o erro foi detectado e o nome do arquivo da classe envolvente.
+Para programas corretos, a saída é uma árvore de sintaxe abstrata com anotação de tipo. Você
+será avaliado se sua fase semântica anota corretamente ASTs com tipos e se sua fase semântica funciona
+corretamente com o gerador de código padrão do compiladorcoolc.
+9 Testando o Analisador Semântico
+Você precisará de umscanner e umparser funcionais para testar seu analisador semântico. Você pode usar
+seus própriosscanner/parser (desenvolvidos nos trabalhos anteriores) ou os scanner/parser do compilador
+padrão coolc. Por padrão, as fasescoolc já são usadas; para mudar isso, substitua o executávellexer e/ou
+parser (que são links simbólicos no diretório do projeto) pelo sua própria implementação de scanner
+e/ou parser. Mesmo se você usar seu próprioscanner e/ou parser, é aconselhável testar seu analisador
+semântico com o scanner e o parser do compilador padrão de coolc pelo menos uma vez, porque seu
+analisador semântico será avaliado usando essas implementações.
+Você executará seu analisador semântico usandomysemant, umshell scriptque “cola” o seu analisador
+semântico com oscanner e oparser. Observe que mysemant usa umﬂag -s para depurar o analisador; o
+uso desse sinalizador apenas faz com quesemant_debug (uma variável global na versão em C++ e um
+campo estático da classeFlags na versão em Java) seja deﬁnida(o). Adicionar o código real para produzir
+pág. 5 de 6
+--- page 6 ---
+Compiladores Conﬁguração para TPs
+informações úteis de depuração é parte de sua tarefa. Veja mais informações no arquivoREADME para
+detalhes sobre essa parte do projeto.
+Quando tiver certeza de que seu analisador semântico está funcionando, tente executarmycoolc para
+chamar seu analisadorjunto com outras fases do compilador. Você devetestar esse compiladorem entradas
+boas e ruins para ver se tudo está funcionando. Lembre-se de que erros no analisador semântico podem
+se manifestar no código gerado ou somente quando o programa compilado é executado no simuladorspim.
+10 Observações
+A fase de análise semântica é de longe o maior componente do compilador até agora. A solução da
+implementação padrão possui aproximadamente 1300 linhas de código em C++ (bem documentadas).
+Você encontrará a tarefa mais fácil se demorar algum tempo para projetar o veriﬁcador semântico antes
+da codiﬁcação. Pergunte a si mesmo:
+• Quais requisitos eu preciso veriﬁcar?
+• Quando preciso veriﬁcar um requisito?
+• Quando as informações necessárias para veriﬁcar um requisito são geradas?
+• Onde estão as informações necessárias para veriﬁcar um requisito?
+Se você puder responder a essas perguntas para cada aspecto da linguagemCool, a implementação
+de uma solução deve ser bem simples e direta.
+11 O que entregar
+Certiﬁque-se de concluir os seguintes itens antes de enviar para evitar penalidades na avaliação de seu
+trabalho.
+• Modiﬁcar o ﬁnal do arquivoREADME. Parte dessa tarefa é preencher oREADME com
+anotações sobre o seu projeto.
+• Inclua os casos de teste que devem passar (positivos) no analisador semântico
+em good.cl e os casos de teste (negativos) que devem fazer com que o analisador
+semântico emita um erro embad.cl.
+• Assegure-se de que todo o seu código para o analisador semântico está em nos
+seguintes arquivos:
+– cool-tree.h, semant.h e semant.cc para a versão em C++ version; ou
+– cool-tree.java, ClassTable.javae TreeConstants.java para a versão em Java.
+• Compactar e codiﬁcar o subdiretórioPA4, por exemplo da seguinte forma:
+tar cvzf PA4.tar.gz PA4
+uuencode PA4.tar.gz PA4.tar.gz > PA4.u
+rm PA4.tar.gz
+• Entregar o arquivoPA4.u via Canvas.
+pág. 6 de 6
+
